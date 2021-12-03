@@ -1,0 +1,22 @@
+{
+  "name": "trialmybox.github.io",
+  "version": "1.0.0",
+  "description": "trial mybox",
+  "main": "instascan.min.js",
+  "scripts": {
+    "test": "trialbox"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nandozz/trialmybox.github.io.git"
+  },
+  "keywords": [
+    "trialbox"
+  ],
+  "author": "nandozz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nandozz/trialmybox.github.io/issues"
+  },
+  "homepage": "https://github.com/nandozz/trialmybox.github.io#readme"
+}
