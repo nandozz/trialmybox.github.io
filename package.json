@@ -15,6 +15,9 @@
   ],
   "author": "nandozz",
   "license": "ISC",
+  "dependencies": {
+    "ws":"^8.3.0"
+  },
   "bugs": {
     "url": "https://github.com/nandozz/trialmybox.github.io/issues"
   },
