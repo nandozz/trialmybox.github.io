@@ -13,7 +13,9 @@
 	</script>
 
 	<script src="jquery.min.js"></script>
-	<script src="instascan.min.js"></script>
+	<!-- <script src="instascan.min.js"></script> -->
+	<script src="html5-qrcode.min.js"></script>
+
 
 	<script type="text/javascript" language="javascript">
 		var mqtt;
@@ -159,16 +161,23 @@
 	<div class="main">
 		<div class="package">
 			<form>
-				<label>Scan Package</label>
+				<label class="user">Scan Package</label>
 				<label class="info" type="text" id="devID"> </label>
 				<label class="info" id="sub">Not Connected </label>
 				<center>
-					<div style="text-align:center">
+					<!-- <div style="text-align:center">
 						<video id="preview" width="200" height="150"></video>
-					</div>
+					</div> -->
+					<div class="col" >
+						<div style="width:250px" id="preview"></div>
+					  </div>
 				</center>
 			</form>
-			<input type="text" id="code" placeholder="No.Resi">
+			
+			
+			<div class="info">
+				<input type="text" id="code" placeholder="No.Resi">
+			</div>
 			<button type="button" onclick="onOpen();">Open</button>
 		</div>
 	</div>
@@ -178,26 +187,28 @@
 		MQTTconnect();
 	</script>
 	<script type="text/javascript" language="javascript">
-		function handleSubmit() {
-			const code = document.getElementById('code').value;
-			localStorage.setItem("NAME", code);
-			return;
-		}
+function handleSubmit() {
+
+const name = document.getElementById('qrcode').value;
+localStorage.setItem("NAME", name);
+return;
+}
+
+function onScanSuccess(qrCodeMessage) {
+    document.getElementById('code').value = qrCodeMessage;
+}
+
+function onScanError(errorMessage) {
+  //handle scan error
+}
+
+var html5QrcodeScanner = new Html5QrcodeScanner(
+    "preview", { fps: 10, qrbox: {width: 200, height: 200} },);
+	// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
+	html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+
 	
-		let scanner = new Instascan.Scanner({ video: document.getElementById('preview'),mirror: false });
-		scanner.addListener('scan', function (content) {
-			// alert(content);
-			$("#code").val(content);
-		});
-		Instascan.Camera.getCameras().then(function (cameras) {
-			if (cameras.length > 0) {
-				scanner.start(cameras[0]);
-			} else {
-				console.error('No cameras found');
-			}
-		}).catch(function (e) {
-			console.error(e);
-		});
 	</script>
 </body>
 
