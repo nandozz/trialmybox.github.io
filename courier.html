@@ -39,12 +39,7 @@
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
 			setTimeout(function () {
-				// alert("Box Close");
-				var code = document.getElementById("code").value;
-				code = code.substring(code.length - 5, code.length);
-
-
-				// console.log("Open - "+code);
+	
 				mqtt.subscribe("BokuBox/courier/" + name);
 				message = new Paho.MQTT.Message("courier done");
 				message.destinationName = "BokuBox/courier/" + name;
@@ -56,19 +51,7 @@
 			// const name = localStorage.getItem('NAME');
 			// if (alert("Box Open Successfully,\ninput the package.\nDone?")) {
 			if (alert("Box Open Successfully, please input the package.\n\nBox will close automatically")) {
-				txt = "You pressed OK!";
-
-				var code = document.getElementById("code").value;
-				code = code.substring(code.length - 5, code.length);
-
-
-				// console.log("Open - "+code);
-				mqtt.subscribe("BokuBox/courier/" + name);
-				message = new Paho.MQTT.Message("courier done");
-				message.destinationName = "BokuBox/courier/" + name;
-				mqtt.send(message);
 			}
-
 		}
 
 
@@ -187,12 +170,7 @@
 		MQTTconnect();
 	</script>
 	<script type="text/javascript" language="javascript">
-function handleSubmit() {
 
-const name = document.getElementById('qrcode').value;
-localStorage.setItem("NAME", name);
-return;
-}
 
 function onScanSuccess(qrCodeMessage) {
     document.getElementById('code').value = qrCodeMessage;

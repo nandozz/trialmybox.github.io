@@ -155,6 +155,18 @@
   <div class="main">
     <input type="checkbox" id="chk" aria-hidden="true" onclick="handleVideoScreen()">
 
+    <div class=" signup">
+      <form>
+        <label for="chk" aria-hidden="true">MyBox</label>
+
+
+        <input type="text" id="boxid" name="boxid" placeholder="Box ID" required="">
+        <input type="text" id="key" name="key" placeholder="Key" required="">
+        <input type="text" id="resi" name="resi" placeholder="No. Resi" required="">
+        <button type="submit" onclick="handleAdd() ">Add</button>
+      </form>
+    </div>
+
     <div class="login">
       <form action="courier.html" method="GET">
         <label for="chk" aria-hidden="true">Courier</label>
@@ -163,8 +175,8 @@
             <video id="preview" style="width: 200px; height: 150px;"></video>
           </div> -->
           <div class="col" >
-			<div style="width:250px" id="preview"></div>
-		</div>
+						<div style="width:250px" id="preview"></div>
+					</div>
         </center>
         <input type="text" id="qrcode" name="name" placeholder="Box ID" required="">
         <button type="submit" onclick="handleSubmit()">Connect</button>
@@ -183,6 +195,13 @@
     localStorage.setItem("NAME", name);
     return;
   }
+  function handleAdd() {
+    const boxid = document.getElementById('boxid').value;
+    const key = document.getElementById('key').value;
+    const resi = document.getElementById('resi').value;
+    // localStorage.setItem("NAME", name);
+    return;
+  }
 
   function onScanSuccess(qrCodeMessage) {
     document.getElementById('qrcode').value = qrCodeMessage;
@@ -198,6 +217,28 @@ var html5QrcodeScanner = new Html5QrcodeScanner(
 	// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
 	html5QrcodeScanner.render(onScanSuccess, onScanError);
 
+
+
+
+  // function handleVideoScreen() {
+
+  //   // var videoscreen = document.getElementById("preview");
+  //   let scanner = new Instascan.Scanner({ video: document.getElementById('preview'),mirror: false });
+
+  //   scanner.addListener('scan', function (content) {
+  //     // alert(content);
+  //     $("#qrcode").val(content);
+  //   });
+  //   Instascan.Camera.getCameras().then(function (cameras) {
+  //     if (cameras.length > 0) {
+  //       scanner.start(cameras[0]);
+  //     } else {
+  //       console.error('No cameras found');
+  //     }
+  //   }).catch(function (e) {
+  //     console.error(e);
+  //   });
+  // }
 </script>
 
 </html>
