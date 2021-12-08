@@ -30,12 +30,37 @@
             // const params = new URLSearchParams(queryString);
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
-			const resi = params.get('resi');
+			let resi = params.get('resi');
 
 			// const name = localStorage.getItem('NAME');
 			document.getElementById('name').innerHTML = name;
 			document.getElementById('resi').innerHTML = resi;
+			document.getElementsById("userbtn").innerHTML = "Check";
+
+		
+			
 		})
+		function move() {
+			var elem = document.getElementById("myBar");   
+			var width = 0;
+			var id = setInterval(frame, 10);
+			function frame() {
+				if (width == 100) {
+				clearInterval(id);
+
+				var status = document.getElementById("info").textContent;
+				if (status.includes("Connecting")){
+					console.log(status);
+					document.getElementById("info").innerHTML = "Not Connected";	
+					document.getElementById("info").style.color = "#F24E1E";
+				}
+
+				} else {
+				width++; 
+				elem.style.width = width + '%'; 
+				}
+			}
+			}
 
 
 		function confirmInfo() {
@@ -56,8 +81,9 @@
             const name = params.get('name');
             const key = params.get('key');
             var code = params.get('resi');
-            if(code.toUpperCase() == "CLEAR" || code.toUpperCase() == "LIST"){
-                code =  code.toLocaleUpperCase();
+            if(code.toLowerCase() == "clear"  || code.toLowerCase() == "list" || code.toLowerCase() == "open" || code.toLowerCase() == "close" || code.toLowerCase() == "reset" || code.toLowerCase() == "restart"){
+                // code =  code.toLocaleUpperCase();
+				code = code.toLowerCase();
             }
             else{
                 code = code.substring(code.length - 5, code.length);
@@ -65,9 +91,9 @@
             }
             console.log(code);
 			
-			mqtt.subscribe("BokuBox/courier/" + name);
+			mqtt.subscribe("BokuBox/"+key+"/" + name);
 			message = new Paho.MQTT.Message(key+" "+code);
-			message.destinationName = "BokuBox/courier/" + name;
+			message.destinationName = "BokuBox/"+key+"/" + name;
 			mqtt.send(message);
 
            
@@ -82,29 +108,47 @@
 
 		function onMessageArrived(msg) {
 			out_msg = msg.payloadString;
-            if (out_msg.includes("Address")) {
-                document.getElementById("sub").innerHTML = "Conneted";
+			console.log("onMessage Arrived: "+out_msg);
+			
+            if (out_msg.includes("connected")) {
+                document.getElementById("info").innerHTML = "Conneted";
+				
+				document.getElementById("info").style.color = "#4ECB71";
             }
-			else if (out_msg.includes("List Add")) {
-				document.getElementById("sub").innerHTML = "Successfully";
-				document.getElementById("sub").style.color = "#04AA6D";
+			
+			else if (out_msg.includes("List Add") || out_msg.includes("Box Open") || out_msg.includes("Box Close")) {
+				document.getElementById("info").innerHTML = "Successfully";
+				document.getElementById("info").style.color = "#4ECB71";
                 confirmInfo();
 			}
 			else if (out_msg.includes("List Full")) {
-                document.getElementById("sub").innerHTML = out_msg;
-				document.getElementById("sub").style.color = "#e80000";
+                document.getElementById("info").innerHTML = out_msg;
+				document.getElementById("info").style.color = "#F24E1E";
                 confirmInfo();
 			}
-			else if (out_msg.includes("List")) {
-                document.getElementById("sub").innerHTML = out_msg;
-				document.getElementById("sub").style.color = "#868788";
-				document.getElementById("sub").style.fontSize = "12px";
+			if (out_msg.includes("List.")) {
+				let list="";
+				const myList = out_msg.split(".");
+				for (let i = 1; i < myList.length-1; i++) {
+					list += i +". "+myList[i]+"<br/>";
+				}
+                document.getElementById("info").innerHTML = list;
+				document.getElementById("info").style.color = "#FCFCFC";
+				document.getElementById("info").style.fontSize = "12px";
+                confirmInfo();
+			}
+			else if (out_msg.includes("empty")) {
+                document.getElementById("info").innerHTML = "Empty";
+				document.getElementById("info").style.color = "#868788";
+				document.getElementById("info").style.fontSize = "12px";
                 confirmInfo();
 			}
             
 		}
 
 		function onConnect() {
+			move();
+			// setTimeout(move,3000);
 			// Once a connection has been made, make a subscription and send a message.
 			// readDevID();
 			const params = (new URL(document.location)).searchParams;
@@ -114,9 +158,9 @@
 			// const name = localStorage.getItem('NAME');
 			// var devID = document.getElementById("devID").value;
 			console.log("Connected to " + name);
-			mqtt.subscribe("BokuBox/courier/" + name);
-			message = new Paho.MQTT.Message("courier ping");
-			message.destinationName = "BokuBox/courier/" + name;
+			mqtt.subscribe("BokuBox/"+key+"/"+ name);
+			message = new Paho.MQTT.Message(key+" ping");
+			message.destinationName = "BokuBox/"+key+"/" + name;
 			message.retained = false;
 			mqtt.send(message);
     
@@ -160,9 +204,14 @@
         <label type="text" id="name" name="name" placeholder="Box ID"></label>
         <label type="text" id="key" name="key" placeholder="Key"></label>
         <label type="text" id="resi" name="resi" placeholder="No. Resi"></label>
-        <label class="info" id="sub">Connecting... </label>
+        <label class="info" id="info">Connecting... </label>
+		<div id="myProgress">
+			<div id="myBar"></div>
+		  </div>
+		  
+		  <br>
         <div>            
-            <button type="button" onclick="onOpen();">Add</button>
+            <button id="userbtn" type="button" onclick="onOpen();">Submit</button>
         </div>
     </div>
 

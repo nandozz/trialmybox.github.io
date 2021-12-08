@@ -184,7 +184,7 @@
 						<div style="width:250px" id="preview"></div>
 					</div>
         </center>
-        <input type="text" id="qrcode" name="name" placeholder="Box ID" required="">
+        <input type="text" id="qrcode" name="name" placeholder="Box ID" onchange="checkprotocol()" required="">
         <button type="submit" onclick="handleSubmit()">Connect</button>
       </form>
     </div>
@@ -193,6 +193,11 @@
 
 
 <script type="text/javascript" language="javascript">
+	function checkprotocol(){
+		let protocol = location.protocol;
+// document.getElementById("demo").innerHTML = protocol;
+console.log(protocol);
+	}
  
   function handleSubmit() {
 
