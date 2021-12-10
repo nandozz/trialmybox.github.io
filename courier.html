@@ -39,7 +39,7 @@
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
 			setTimeout(function () {
-	
+
 				mqtt.subscribe("BokuBox/courier/" + name);
 				message = new Paho.MQTT.Message("courier done");
 				message.destinationName = "BokuBox/courier/" + name;
@@ -120,7 +120,7 @@
 				timeout: 3,
 				onSuccess: onConnect,
 				onFailure: onFailure,
-				
+
 			};
 			mqtt.onMessageArrived = onMessageArrived
 
@@ -152,13 +152,13 @@
 					<!-- <div style="text-align:center">
 						<video id="preview" width="200" height="150"></video>
 					</div> -->
-					<div class="col" >
+					<div class="col">
 						<div style="width:250px" id="preview"></div>
-					  </div>
+					</div>
 				</center>
 			</form>
-			
-			
+
+
 			<div class="info">
 				<input type="text" id="code" placeholder="No.Resi">
 			</div>
@@ -173,21 +173,22 @@
 	<script type="text/javascript" language="javascript">
 
 
-function onScanSuccess(qrCodeMessage) {
-    document.getElementById('code').value = qrCodeMessage;
-}
+		function onScanSuccess(qrCodeMessage) {
+			document.getElementById('code').value = qrCodeMessage;
+			html5QrcodeScanner.clear();
+		}
 
-function onScanError(errorMessage) {
-  //handle scan error
-}
+		function onScanError(errorMessage) {
+			//handle scan error
+		}
 
-var html5QrcodeScanner = new Html5QrcodeScanner(
-    "preview", { fps: 10, qrbox: {width: 200, height: 200} },);
-	// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
-	html5QrcodeScanner.render(onScanSuccess, onScanError);
+		var html5QrcodeScanner = new Html5QrcodeScanner(
+			"preview", { fps: 10, qrbox: { width: 200, height: 200 } });
+		// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
+		html5QrcodeScanner.render(onScanSuccess, onScanError);
 
 
-	
+
 	</script>
 </body>
 

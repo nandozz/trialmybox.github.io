@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -78,12 +78,12 @@
 			// Once a connection has been made, make a subscription and send a message.
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
-      const code = params.get('resi');
+			const code = params.get('resi');
 			// const name = localStorage.getItem('NAME');
 			// var code = document.getElementById("resi").value;
 			code = code.substring(code.length - 5, code.length);
-      console.log("password add " + code);
-			
+			console.log("password add " + code);
+
 			mqtt.subscribe("BokuBox/courier/" + name);
 			message = new Paho.MQTT.Message("password add " + code);
 			message.destinationName = "BokuBox/courier/" + name;
@@ -126,7 +126,7 @@
 			message.destinationName = "BokuBox/courier/" + name;
 			message.retained = false;
 			mqtt.send(message);
-    
+
 		}
 
 
@@ -149,105 +149,104 @@
 
 	</script>
 
-  
+
 </head>
 
 <body>
 
-  <head>
-    <title>Slide Navbar</title>
-    <link rel="stylesheet" type="text/css" href="slide navbar style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
-  </head>
+	<head>
+		<title>Slide Navbar</title>
+		<link rel="stylesheet" type="text/css" href="slide navbar style.css">
+		<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+	</head>
 
 
-  <div class="main">
-    <input type="checkbox" id="chk" aria-hidden="true" onclick="handleVideoScreen()">
+	<div class="main">
+		<input type="checkbox" id="chk" aria-hidden="true" onclick="checkuser()">
 
-    <div class="signup">
-      <form action="add.html" method="GET" >
-        <label for="chk" aria-hidden="true">MyBox</label>
-        <input type="text" id="name" name="name" placeholder="Box ID" onfocusout="handleSubmit()" required="">
-        <input type="text" id="key" name="key" placeholder="Key" required="">
-        <input type="text" id="resi" name="resi" placeholder="No. Resi" required="">
-        <button type="submit">Add</button>
-      </form>
-    </div>
-    <div class="login">
-      <form action="courier.html" method="GET">
-        <label for="chk" aria-hidden="true">Courier</label>
-        <center>
-          <!-- <div style="text-align:center">
+		<div class="signup">
+			<form action="add.html" method="GET">
+				<label for="chk" aria-hidden="true">MyBox</label>
+				<input type="text" id="name" name="name" placeholder="Box ID" onfocusout="handleSubmit()" required="">
+				<input type="text" id="key" name="key" placeholder="Key" required="">
+				<input type="text" id="resi" name="resi" placeholder="No. Resi" required="">
+				<button type="submit">Add</button>
+			</form>
+		</div>
+		<div class="courier">
+			<form action="courier.html" method="GET">
+				<label for="chk" aria-hidden="true">Courier</label>
+				<center>
+					<!-- <div style="text-align:center">
             <video id="preview" style="width: 200px; height: 150px;"></video>
           </div> -->
-          <div class="col" >
+					<div class="col">
 						<div style="width:250px" id="preview"></div>
 					</div>
-        </center>
-        <input type="text" id="qrcode" name="name" placeholder="Box ID" onchange="checkprotocol()" required="">
-        <button type="submit" onclick="handleSubmit()">Connect</button>
-      </form>
-    </div>
-  </div>
+				</center>
+				<input type="text" id="qrcode" name="name" placeholder="Box ID" onchange="checkprotocol()" required="">
+				<button type="submit" onclick="handleSubmit()">Connect</button>
+			</form>
+		</div>
+	</div>
 </body>
 
 
 <script type="text/javascript" language="javascript">
-	function checkprotocol(){
+	var html5QrcodeScanner = new Html5QrcodeScanner(
+		"preview", { fps: 10, qrbox: { width: 200, height: 200 } });
+
+	function checkprotocol() {
 		let protocol = location.protocol;
-// document.getElementById("demo").innerHTML = protocol;
-console.log(protocol);
+		// document.getElementById("demo").innerHTML = protocol;
+		console.log(protocol);
 	}
- 
-  function handleSubmit() {
 
-const name = document.getElementById('name').value;
-// const key = document.getElementById('key').value;
-// const code = document.getElementById('resi').value;
-localStorage.setItem("NAME", name);
-// localStorage.setItem("KEY", key);
-// localStorage.setItem("CODE", code);
+	function checkuser() {
+		var checkBox = document.getElementById("chk");
+		var text = document.getElementById("text");
+		if (checkBox.checked == true) {
+			handleVideoScreen();
+			console.log("ON");
+		} else {
+			html5QrcodeScanner.clear();
+			console.log("OFF");
+		}
+	}
 
-return;
-}
+	function handleSubmit() {
 
+		const name = document.getElementById('name').value;
+		// const key = document.getElementById('key').value;
+		// const code = document.getElementById('resi').value;
+		localStorage.setItem("NAME", name);
+		// localStorage.setItem("KEY", key);
+		// localStorage.setItem("CODE", code);
 
-  function onScanSuccess(qrCodeMessage) {
-    document.getElementById('qrcode').value = qrCodeMessage;
-    
-}
-
-function onScanError(errorMessage) {
-  //handle scan error
-}
-
-var html5QrcodeScanner = new Html5QrcodeScanner(
-    "preview", { fps: 10, qrbox: {width: 200, height: 200} },);
-	// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
-	html5QrcodeScanner.render(onScanSuccess, onScanError);
+		return;
+	}
 
 
+	function onScanSuccess(qrCodeMessage) {
+		document.getElementById('qrcode').value = qrCodeMessage;
+		html5QrcodeScanner.clear();
+
+	}
+
+	function onScanError(errorMessage) {
+		//handle scan error
+	}
 
 
-  function handleVideoScreen() {
 
-    // var videoscreen = document.getElementById("preview");
-    let scanner = new Instascan.Scanner({ video: document.getElementById('preview'),mirror: false });
 
-    scanner.addListener('scan', function (content) {
-      // alert(content);
-      $("#qrcode").val(content);
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-      if (cameras.length > 0) {
-        scanner.start(cameras[0]);
-      } else {
-        console.error('No cameras found');
-      }
-    }).catch(function (e) {
-      console.error(e);
-    });
-  }
+
+	function handleVideoScreen() {
+
+
+		// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
+		html5QrcodeScanner.render(onScanSuccess, onScanError);
+	}
 
 </script>
 

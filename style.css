@@ -83,14 +83,14 @@ center {
   margin: auto 0px;
   display: block;
 }
-.login {
-  height: 660px;
+.courier {
+  height: 630px;
   background: #eee;
   border-radius: 60% / 10%;
-  transform: translateY(-160px);
+  transform: translateY(-240px);
   transition: 0.8s ease-in-out;
 }
-.login label {
+.courier label {
   color: #573b8a;
   transform: scale(0.6);
 }
@@ -106,10 +106,10 @@ center {
   transition: 0.5s ease-in-out;
 }
 
-#chk:checked ~ .login {
-  transform: translateY(-700px);
+#chk:checked ~ .courier {
+  transform: translateY(-680px);
 }
-#chk:checked ~ .login label {
+#chk:checked ~ .courier label {
   transform: scale(1);
 }
 #chk:checked ~ .signup label {
@@ -129,6 +129,6 @@ center {
   width: 0px;
   height: 8px;
   position: absolute;
-  
+
   border-radius: 50px;
 }
