@@ -14,142 +14,7 @@
 	</script>
 
 	<script src="jquery.min.js"></script>
-	<!-- <script src="instascan.min.js"></script> -->
 	<script src="html5-qrcode.min.js"></script>
-
-
-	<script type="text/javascript" language="javascript">
-		var mqtt;
-		var reconnectTimeout = 2000;
-		var host = "broker.hivemq.com";
-		var port = 8000;
-		// var host = "broker.mqttdashboard.com";
-		// var port = 8000;
-
-		window.addEventListener('load', () => {
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
-
-			// const name = localStorage.getItem('NAME');
-			document.getElementById('name').innerHTML = name;
-		})
-
-
-		function confirmInfo() {
-			var txt;
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
-			setTimeout(function () {
-				// alert("Box Close");
-				var code = document.getElementById("code").value;
-				code = code.substring(code.length - 5, code.length);
-
-
-				// console.log("Open - "+code);
-				mqtt.subscribe("BokuBox/courier/" + name);
-				message = new Paho.MQTT.Message("courier done");
-				message.destinationName = "BokuBox/courier/" + name;
-				mqtt.send(message);
-
-				// window.location.href = "index.html";
-
-			}, 7000);
-			// const name = localStorage.getItem('NAME');
-			// if (alert("Box Open Successfully,\ninput the package.\nDone?")) {
-			if (alert("Box Open Successfully, please input the package.\n\nBox will close automatically")) {
-				txt = "You pressed OK!";
-
-				var code = document.getElementById("code").value;
-				code = code.substring(code.length - 5, code.length);
-
-
-				// console.log("Open - "+code);
-				mqtt.subscribe("BokuBox/courier/" + name);
-				message = new Paho.MQTT.Message("courier done");
-				message.destinationName = "BokuBox/courier/" + name;
-				mqtt.send(message);
-			}
-
-		}
-
-
-
-		function onOpen() {
-			// Once a connection has been made, make a subscription and send a message.
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
-			const code = params.get('resi');
-			// const name = localStorage.getItem('NAME');
-			// var code = document.getElementById("resi").value;
-			code = code.substring(code.length - 5, code.length);
-			console.log("password add " + code);
-
-			mqtt.subscribe("BokuBox/courier/" + name);
-			message = new Paho.MQTT.Message("password add " + code);
-			message.destinationName = "BokuBox/courier/" + name;
-			mqtt.send(message);
-		}
-
-		function onFailure(message) {
-			console.log("Connection Attempt to Host " + host + "Failed");
-			setTimeout(MQTTconnect, reconnectTimeout);
-		}
-
-
-		function onMessageArrived(msg) {
-			out_msg = msg.payloadString;
-			if (out_msg.includes("Address")) {
-
-				document.getElementById("sub").innerHTML = out_msg;
-
-			}
-			else if (out_msg.includes("Box Open")) {
-				confirmInfo();
-
-				// document.getElementById("sub").innerHTML = out_msg;
-
-			}
-
-			console.log(out_msg);
-		}
-
-		function onConnect() {
-			// Once a connection has been made, make a subscription and send a message.
-			// readDevID();
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
-			// const name = localStorage.getItem('NAME');
-			// var devID = document.getElementById("devID").value;
-			console.log("Connected to " + name);
-			mqtt.subscribe("BokuBox/courier/" + name);
-			message = new Paho.MQTT.Message("courier ping");
-			message.destinationName = "BokuBox/courier/" + name;
-			message.retained = false;
-			mqtt.send(message);
-
-		}
-
-
-		function MQTTconnect() {
-			console.log("connecting to " + host + " " + port);
-			var x = Math.floor(Math.random() * 10000);
-			var cname = "orderform-" + x;
-			mqtt = new Paho.MQTT.Client(host, port, cname);
-			//document.write("connecting to "+ host);
-			var options = {
-				timeout: 3,
-				onSuccess: onConnect,
-				onFailure: onFailure,
-			};
-			mqtt.onMessageArrived = onMessageArrived
-
-			mqtt.connect(options); //connect
-		}
-
-
-	</script>
-
-
 </head>
 
 <body>
@@ -176,9 +41,6 @@
 				<button type="submit">Add</button>
 			</form>
 		</div>
-		<a href="http://6.tcp.ngrok.io:15735/">
-			<button>MyBoku</button>
-		</a>
 		<div class="courier">
 			<form action="courier.html" method="GET">
 				<label for="chk" aria-hidden="true">Courier</label>
@@ -191,7 +53,7 @@
 					</div>
 				</center>
 				<input type="text" id="qrcode" name="name" placeholder="Box ID" onchange="checkprotocol()" required="">
-				<button type="submit" onclick="handleSubmit()">Connect</button>
+				<button type="submit">Connect</button>
 			</form>
 		</div>
 	</div>
@@ -220,18 +82,6 @@
 		}
 	}
 
-	function handleSubmit() {
-
-		const name = document.getElementById('name').value;
-		// const key = document.getElementById('key').value;
-		// const code = document.getElementById('resi').value;
-		localStorage.setItem("NAME", name);
-		// localStorage.setItem("KEY", key);
-		// localStorage.setItem("CODE", code);
-
-		return;
-	}
-
 
 	function onScanSuccess(qrCodeMessage) {
 		document.getElementById('qrcode').value = qrCodeMessage;
@@ -244,12 +94,7 @@
 	}
 
 
-
-
-
 	function handleVideoScreen() {
-
-
 		// html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
 		html5QrcodeScanner.render(onScanSuccess, onScanError);
 	}
