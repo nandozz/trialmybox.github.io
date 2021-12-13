@@ -70,13 +70,15 @@
                 window.location.replace("index.html");
                 window.history.pushState(null, "", window.location.href);
                 window.onpopstate = function () {
-                    window.history.pushState(null, "", window.location.href);
+                window.history.pushState(null, "", window.location.href);
                 };
 			}, 7000); 
 
 		}
 		function onOpen() {
             // Once a connection has been made, make a subscription and send a message.
+			document.getElementById("info").innerHTML = "Sending...";
+			document.getElementById("info").style.color = "#FCFCFC";
 			const params = (new URL(document.location)).searchParams;
             const name = params.get('name');
             const key = params.get('key');
@@ -84,17 +86,35 @@
             if(code.toLowerCase() == "clear"  || code.toLowerCase() == "list" || code.toLowerCase() == "open" || code.toLowerCase() == "close" || code.toLowerCase() == "reset" || code.toLowerCase() == "restart"){
                 // code =  code.toLocaleUpperCase();
 				code = code.toLowerCase();
+				mqtt.subscribe("BokuBox/"+key+"/" + name);
+				message = new Paho.MQTT.Message(key+" "+code);
+				message.destinationName = "BokuBox/"+key+"/" + name;
+				mqtt.send(message);
             }
-            else{
-                code = code.substring(code.length - 5, code.length);
+            else if(code.length >= 5){
+				code = code.substring(code.length - 5, code.length);
                 code= "add "+code;
-            }
-            console.log(code);
-			
 			mqtt.subscribe("BokuBox/"+key+"/" + name);
 			message = new Paho.MQTT.Message(key+" "+code);
 			message.destinationName = "BokuBox/"+key+"/" + name;
 			mqtt.send(message);
+               
+            }else {
+				setTimeout(function () {
+				// window.location.href = "index.html";
+                window.location.replace("index.html");
+                window.history.pushState(null, "", window.location.href);
+                window.onpopstate = function () {
+                window.history.pushState(null, "", window.location.href);
+                };
+			}, 7000); 
+				document.getElementById("info").innerHTML = "No.Resi less than 5 character ";
+				document.getElementById("info").style.color = "#F24E1E";
+					
+				console.log(code);
+				
+			}
+		
 
            
             
@@ -116,7 +136,7 @@
 				document.getElementById("info").style.color = "#4ECB71";
             }
 			
-			else if (out_msg.includes("List Add") || out_msg.includes("Box Open") || out_msg.includes("Box Close")) {
+			else if (out_msg.includes("List Add") || out_msg.includes("Box Open") || out_msg.includes("Box Close")|| out_msg.includes("DONE")) {
 				document.getElementById("info").innerHTML = "Successfully";
 				document.getElementById("info").style.color = "#4ECB71";
                 confirmInfo();
@@ -132,7 +152,7 @@
 				for (let i = 1; i < myList.length-1; i++) {
 					list += i +". "+myList[i]+"<br/>";
 				}
-                document.getElementById("info").innerHTML = list;
+                document.getElementById("info").innerHTML = list==""?"Empty":list;
 				document.getElementById("info").style.color = "#FCFCFC";
 				document.getElementById("info").style.fontSize = "12px";
                 confirmInfo();
