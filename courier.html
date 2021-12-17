@@ -23,12 +23,13 @@
 	<script type="text/javascript" language="javascript">
 		var mqtt;
 		var reconnectTimeout = 2000;
-		// var host = "broker.mqttdashboard.com";
-		// var port = 8000;
+		var host = "8f77eef4b4aa44ccbbaa6e8309aee507.s1.eu.hivemq.cloud";
+		var port = 8884;
+		
 		// var host = "test.mosquitto.org";
-		// var port = 8081;
-		var host = "iot.eclipse.org";  	
-		var port = 443;
+		// var port = 8883;
+		// var host = "iot.eclipse.org";  	
+		// var port = 443;
 
 		window.addEventListener('load', () => {
 			const params = (new URL(document.location)).searchParams;
@@ -72,6 +73,7 @@
 			mqtt.subscribe("BokuBox/courier/" + name);
 			message = new Paho.MQTT.Message("courier " + code);
 			message.destinationName = "BokuBox/courier/" + name;
+			message.qos = 2;
 			mqtt.send(message);
 		}
 
@@ -118,12 +120,18 @@
 			console.log("connecting to " + host + " " + port);
 			var x = Math.floor(Math.random() * 10000);
 			var cname = "orderform-" + x;
+			// mqtt = new Paho.MQTT.Client(host, port, cname);
 			mqtt = new Paho.MQTT.Client(host, port, cname);
+			//document.write("connecting to "+ host);
 			var options = {
 				useSSL:true,
 				timeout: 3,
+
 				onSuccess: onConnect,
 				onFailure: onFailure,
+				mqttVersion: 3,
+				userName: "NANDO",
+				password: "Hivemq123"
 
 			};
 			mqtt.onMessageArrived = onMessageArrived
