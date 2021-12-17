@@ -3,8 +3,9 @@ function send() {
 }
 const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
-const host = 'wss//broker.hivemq.com:8000/mqtt'
-// const host = 'ws://broker.hivemq.com:8000/mqtt'
+// const host = 'ws://test.mosca.io:1883/mqtt'
+// const host = 'ws://test.mosquitto.org:8080/mqtt'
+const host = 'ws://broker.hivemq.com:8000/mqtt'
 
 const options = {
   keepalive: 30,
