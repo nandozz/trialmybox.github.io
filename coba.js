@@ -4,8 +4,15 @@ function send() {
 const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
 // const host = 'ws://test.mosca.io:1883/mqtt'
-// const host = 'ws://test.mosquitto.org:8080/mqtt'
-const host = 'ws://broker.hivemq.com:8000/mqtt'
+const host = 'wss://iot.eclipse.org:443/mqtt'
+// const host = 'wss://test.mosquitto.org:8081/mqtt'
+// const host = 'ws://broker.hivemq.com:8000/mqtt'
+// var host = "broker.mqttdashboard.com";
+		// var port = 8000;
+		// var host = "test.mosquitto.org";
+		// var port = 8081;
+		// var host = "iot.eclipse.org";  	
+		// var port = 443;
 
 const options = {
   keepalive: 30,
