@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
+	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -26,8 +26,8 @@
 
 
 		window.addEventListener('load', () => {
-            // const queryString = window.location.search;
-            // const params = new URLSearchParams(queryString);
+			// const queryString = window.location.search;
+			// const params = new URLSearchParams(queryString);
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
 			let resi = params.get('resi');
@@ -37,87 +37,87 @@
 			document.getElementById('resi').innerHTML = resi;
 			// document.getElementsById("userbtn").innerHTML = "Check";
 
-		
-			
+
+
 		})
 		function move() {
-			var elem = document.getElementById("myBar");   
+			var elem = document.getElementById("myBar");
 			var width = 0;
 			var id = setInterval(frame, 10);
 			function frame() {
 				if (width == 100) {
-				clearInterval(id);
+					clearInterval(id);
 
-				var status = document.getElementById("info").textContent;
-				if (status.includes("Connecting")){
-					console.log(status);
-					document.getElementById("info").innerHTML = "Not Connected";	
-					document.getElementById("info").style.color = "#F24E1E";
-				}
+					var status = document.getElementById("info").textContent;
+					if (status.includes("Connecting")) {
+						console.log(status);
+						document.getElementById("info").innerHTML = "Not Connected";
+						document.getElementById("info").style.color = "#F24E1E";
+					}
 
 				} else {
-				width++; 
-				elem.style.width = width + '%'; 
+					width++;
+					elem.style.width = width + '%';
 				}
 			}
-			}
+		}
 
 
 		function confirmInfo() {
-			
+
 			setTimeout(function () {
 				// window.location.href = "index.html";
-                window.location.replace("index.html");
-                window.history.pushState(null, "", window.location.href);
-                window.onpopstate = function () {
-                window.history.pushState(null, "", window.location.href);
-                };
-			}, 7000); 
+				window.location.replace("index.html");
+				window.history.pushState(null, "", window.location.href);
+				window.onpopstate = function () {
+					window.history.pushState(null, "", window.location.href);
+				};
+			}, 7000);
 
 		}
 		function onOpen() {
-            // Once a connection has been made, make a subscription and send a message.
+			// Once a connection has been made, make a subscription and send a message.
 			document.getElementById("info").innerHTML = "Sending...";
 			document.getElementById("info").style.color = "#FCFCFC";
 			const params = (new URL(document.location)).searchParams;
-            const name = params.get('name');
-            const key = params.get('key');
-            var code = params.get('resi');
-            if(code.toLowerCase() == "clear"  || code.toLowerCase() == "list" || code.toLowerCase() == "open" || code.toLowerCase() == "close" || code.toLowerCase() == "reset" || code.toLowerCase() == "restart"){
-                // code =  code.toLocaleUpperCase();
+			const name = params.get('name');
+			const key = params.get('key');
+			var code = params.get('resi');
+			if (code.toLowerCase() == "clear" || code.toLowerCase() == "list" || code.toLowerCase() == "open" || code.toLowerCase() == "close" || code.toLowerCase() == "reset" || code.toLowerCase() == "restart") {
+				// code =  code.toLocaleUpperCase();
 				code = code.toLowerCase();
-				mqtt.subscribe("BokuBox/"+key+"/" + name);
-				message = new Paho.MQTT.Message(key+" "+code);
-				message.destinationName = "BokuBox/"+key+"/" + name;
+				mqtt.subscribe("BokuBox/" + key + "/" + name);
+				message = new Paho.MQTT.Message(key + " " + code);
+				message.destinationName = "BokuBox/" + key + "/" + name;
 				mqtt.send(message);
-            }
-            else if(code.length >= 5){
+			}
+			else if (code.length >= 5) {
 				code = code.substring(code.length - 5, code.length);
-                code= "add "+code;
-			mqtt.subscribe("BokuBox/"+key+"/" + name);
-			message = new Paho.MQTT.Message(key+" "+code);
-			message.destinationName = "BokuBox/"+key+"/" + name;
-			mqtt.send(message);
-               
-            }else {
+				code = "add " + code;
+				mqtt.subscribe("BokuBox/" + key + "/" + name);
+				message = new Paho.MQTT.Message(key + " " + code);
+				message.destinationName = "BokuBox/" + key + "/" + name;
+				mqtt.send(message);
+
+			} else {
 				setTimeout(function () {
-				// window.location.href = "index.html";
-                window.location.replace("index.html");
-                window.history.pushState(null, "", window.location.href);
-                window.onpopstate = function () {
-                window.history.pushState(null, "", window.location.href);
-                };
-			}, 7000); 
+					// window.location.href = "index.html";
+					window.location.replace("index.html");
+					window.history.pushState(null, "", window.location.href);
+					window.onpopstate = function () {
+						window.history.pushState(null, "", window.location.href);
+					};
+				}, 7000);
 				document.getElementById("info").innerHTML = "No.Resi less than 5 character ";
 				document.getElementById("info").style.color = "#F24E1E";
-					
-				console.log(code);
-				
-			}
-		
 
-           
-            
+				console.log(code);
+
+			}
+
+
+
+
 		}
 
 		function onFailure(message) {
@@ -128,42 +128,49 @@
 
 		function onMessageArrived(msg) {
 			out_msg = msg.payloadString;
-			console.log("onMessage Arrived: "+out_msg);
-			
-            if (out_msg.includes("connected")) {
-                document.getElementById("info").innerHTML = "Conneted";
-				
+			console.log("onMessage Arrived: " + out_msg);
+			try{
+			const data = JSON.parse(out_msg);
+			document.getElementById("name").innerHTML = data.state;
+			}
+			catch (e){
+				console.log("error message: ${e.message}");
+			}
+
+			if (out_msg.includes("connected")) {
+				document.getElementById("info").innerHTML = "Conneted";
+
 				document.getElementById("info").style.color = "#4ECB71";
-            }
-			
-			else if (out_msg.includes("List Add") || out_msg.includes("Box Open") || out_msg.includes("Box Close")|| out_msg.includes("DONE")) {
+			}
+
+			else if (out_msg.includes("List Add") || out_msg.includes("Box Open") || out_msg.includes("Box Close") || out_msg.includes("DONE")) {
 				document.getElementById("info").innerHTML = "Successfully";
 				document.getElementById("info").style.color = "#4ECB71";
-                confirmInfo();
+				confirmInfo();
 			}
 			else if (out_msg.includes("List Full")) {
-                document.getElementById("info").innerHTML = out_msg;
+				document.getElementById("info").innerHTML = out_msg;
 				document.getElementById("info").style.color = "#F24E1E";
-                confirmInfo();
+				confirmInfo();
 			}
 			if (out_msg.includes("List.")) {
-				let list="";
+				let list = "";
 				const myList = out_msg.split(".");
-				for (let i = 1; i < myList.length-1; i++) {
-					list += i +". "+myList[i]+"<br/>";
+				for (let i = 1; i < myList.length - 1; i++) {
+					list += i + ". " + myList[i] + "<br/>";
 				}
-                document.getElementById("info").innerHTML = list==""?"Empty":list;
+				document.getElementById("info").innerHTML = list == "" ? "Empty" : list;
 				document.getElementById("info").style.color = "#FCFCFC";
 				document.getElementById("info").style.fontSize = "12px";
-                confirmInfo();
+				confirmInfo();
 			}
 			else if (out_msg.includes("empty")) {
-                document.getElementById("info").innerHTML = "Empty";
+				document.getElementById("info").innerHTML = "Empty";
 				document.getElementById("info").style.color = "#868788";
 				document.getElementById("info").style.fontSize = "12px";
-                confirmInfo();
+				confirmInfo();
 			}
-            
+
 		}
 
 		function onConnect() {
@@ -173,17 +180,23 @@
 			// readDevID();
 			const params = (new URL(document.location)).searchParams;
 			const name = params.get('name');
-            const key = params.get('key');
-			const resi = params.get('resi');
+			const key = params.get('key');
+			// const resi = params.get('resi');
 			// const name = localStorage.getItem('NAME');
 			// var devID = document.getElementById("devID").value;
 			console.log("Connected to " + name);
-			mqtt.subscribe("BokuBox/"+key+"/"+ name);
-			message = new Paho.MQTT.Message(key+" ping");
-			message.destinationName = "BokuBox/"+key+"/" + name;
+			mqtt.subscribe("BokuBox/" + key + "/" + name);
+			message = new Paho.MQTT.Message(key + " ping");
+			// message = new Paho.MQTT.Message(JSON.stringify(
+			// 	{
+			// 		x: 10,
+			// 		y: 20,
+			// 	}
+			// ));;
+			message.destinationName = "BokuBox/" + key + "/" + name;
 			message.retained = false;
 			mqtt.send(message);
-    
+
 		}
 
 
@@ -206,40 +219,40 @@
 
 	</script>
 
-  
+
 </head>
 
 <body>
 
-  <head>
-    <title>Slide Navbar</title>
-    <!-- <link rel="stylesheet" type="text/css" href="slide navbar style.css">
+	<head>
+		<title>Slide Navbar</title>
+		<!-- <link rel="stylesheet" type="text/css" href="slide navbar style.css">
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet"> -->
-  </head>
+	</head>
 
 
-  <div class="main">
-    <div class=" signup">
-        <label for="chk" aria-hidden="true">MyBox</label>
-        <label type="text" id="name" name="name" placeholder="Box ID"></label>
-        <label type="text" id="key" name="key" placeholder="Key"></label>
-        <label type="text" id="resi" name="resi" placeholder="No. Resi"></label>
-        <label class="info" id="info">Connecting... </label>
-		<div id="myProgress">
-			<div id="myBar"></div>
-		  </div>
-		  
-		  <br>
-        <div>            
-            <button id="userbtn" type="button" onclick="onOpen();">Submit</button>
-        </div>
-    </div>
+	<div class="main">
+		<div class=" signup">
+			<label for="chk" aria-hidden="true">MyBox</label>
+			<label type="text" id="name" name="name" placeholder="Box ID"></label>
+			<label type="text" id="key" name="key" placeholder="Key"></label>
+			<label type="text" id="resi" name="resi" placeholder="No. Resi"></label>
+			<label class="info" id="info">Connecting... </label>
+			<div id="myProgress">
+				<div id="myBar"></div>
+			</div>
 
-  </div>
+			<br>
+			<div>
+				<button id="userbtn" type="button" onclick="onOpen();">Submit</button>
+			</div>
+		</div>
 
-<script>
+	</div>
+
+	<script>
 		MQTTconnect();
-</script>
+	</script>
 
 </body>
 

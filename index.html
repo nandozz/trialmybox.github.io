@@ -29,27 +29,24 @@
 	<div class="main">
 		<input type="checkbox" id="chk" aria-hidden="true" onclick="checkuser()">
 		<div class="signup">
-			<form action="add.html" method="GET">
+			<form">
 				<label for="chk" aria-hidden="true">MyBox</label>
 				<input type="text" id="name" name="name" placeholder="Box ID" onfocusout="handleSubmit()" required="">
 				<input type="text" id="key" name="key" placeholder="Key" required="">
-				<input type="text" id="resi" name="resi" placeholder="No. Resi" required="">
-				<button type="submit">Add</button>
+				<!-- <input type="text" id="resi" name="resi" placeholder="No. Resi" required=""> -->
+				<button type="button" onclick="login()">Login</button>
 			</form>
 		</div>
 		<div class="courier">
-			<form action="courier.html" method="GET">
+			<form>
 				<label for="chk" aria-hidden="true">Courier</label>
 				<center>
-					<!-- <div style="text-align:center">
-            <video id="preview" style="width: 200px; height: 150px;"></video>
-          </div> -->
 					<div class="col">
 						<div style="width:250px" id="preview"></div>
 					</div>
 				</center>
-				<input type="text" id="qrcode" name="name" placeholder="Box ID" onchange="checkprotocol()" required="">
-				<button type="submit">Connect</button>
+				<input type="text" id="qrcode" name="qrcode" placeholder="Box ID" onchange="checkprotocol()" required="">
+				<button type="button" onclick="courier()">Connect</button>
 			</form>
 		</div>
 	</div>
@@ -57,6 +54,23 @@
 
 
 <script type="text/javascript" language="javascript">
+	window.history.forward();
+        function noBack() {
+            window.history.forward();
+        }
+	function login(){
+		
+		localStorage.setItem("deviceIDs", document.getElementById("name").value);
+		localStorage.setItem("keys", document.getElementById("key").value);
+		// console.log(localStorage.getItem("keys"));
+		window.location.href = "home.html";
+	}
+	function courier(){
+		
+		localStorage.setItem("deviceIDs", document.getElementById("qrcode").value);
+		// console.log(localStorage.getItem("keys"));
+		window.location.href = "courier.html";
+	}
 	var html5QrcodeScanner = new Html5QrcodeScanner(
 		"preview", { fps: 10, qrbox: { width: 200, height: 200 } });
 

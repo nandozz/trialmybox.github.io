@@ -23,27 +23,50 @@
 	<script type="text/javascript" language="javascript">
 		var mqtt;
 		var reconnectTimeout = 2000;
-		var host = "8f77eef4b4aa44ccbbaa6e8309aee507.s1.eu.hivemq.cloud";
-		var port = 8884;
-		
+		var host = "broker.hivemq.com";
+		var port = 8000;
+		// var host = "8f77eef4b4aa44ccbbaa6e8309aee507.s1.eu.hivemq.cloud";
+		// var port = 8884;
+
 		// var host = "test.mosquitto.org";
 		// var port = 8883;
 		// var host = "iot.eclipse.org";  	
 		// var port = 443;
 
 		window.addEventListener('load', () => {
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
 
-			// const name = localStorage.getItem('NAME');
+			const name = localStorage.getItem("deviceIDs");
+
 			document.getElementById('devID').innerHTML = name;
 		})
 
 
+		function move() {
+			var elem = document.getElementById("myBar");
+			var width = 0;
+			var id = setInterval(frame, 10);
+			function frame() {
+				if (width == 100) {
+					clearInterval(id);
+
+					var status = document.getElementById("info").textContent;
+					if (status.includes("Connecting...")) {
+						console.log(status);
+						document.getElementById("info").innerHTML = "Not Connected";
+						document.getElementById("info").style.color = "#F24E1E";
+					}
+
+				} else {
+					width++;
+					elem.style.width = width + '%';
+				}
+			}
+		}
+
+
 		function confirmInfo() {
 			var txt;
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
+			const name = localStorage.getItem("deviceIDs");
 			setTimeout(function () {
 
 				mqtt.subscribe("BokuBox/courier/" + name);
@@ -63,18 +86,24 @@
 
 		function onOpen() {
 			// Once a connection has been made, make a subscription and send a message.
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
+			const name = localStorage.getItem("deviceIDs");
 			// const name = localStorage.getItem('NAME');
 			var code = document.getElementById("code").value;
-			code = code.substring(code.length - 5, code.length);
+			if (code.length > 4) {
+
+				// code = code.substring(code.length - 5, code.length);
+				mqtt.subscribe("BokuBox/courier/" + name);
+				message = new Paho.MQTT.Message("courier " + code);
+				message.destinationName = "BokuBox/courier/" + name;
+				message.qos = 2;
+				mqtt.send(message);
+			}
+
+			else {
+				alert("No. resi kurang dari 5 digit");
+			}
 
 			// console.log("Open - "+code);
-			mqtt.subscribe("BokuBox/courier/" + name);
-			message = new Paho.MQTT.Message("courier " + code);
-			message.destinationName = "BokuBox/courier/" + name;
-			message.qos = 2;
-			mqtt.send(message);
 		}
 
 		function onFailure(message) {
@@ -87,7 +116,7 @@
 			out_msg = msg.payloadString;
 			if (out_msg.includes("Address")) {
 
-				document.getElementById("sub").innerHTML = out_msg;
+				document.getElementById("info").innerHTML = out_msg;
 
 			}
 			else if (out_msg.includes("Box Open")) {
@@ -103,10 +132,8 @@
 		function onConnect() {
 			// Once a connection has been made, make a subscription and send a message.
 			// readDevID();
-			const params = (new URL(document.location)).searchParams;
-			const name = params.get('name');
-			// const name = localStorage.getItem('NAME');
-			// var devID = document.getElementById("devID").value;
+			move();
+			const name = localStorage.getItem("deviceIDs");
 			console.log("Connected to " + name);
 			mqtt.subscribe("BokuBox/courier/" + name);
 			message = new Paho.MQTT.Message("courier ping");
@@ -124,14 +151,15 @@
 			mqtt = new Paho.MQTT.Client(host, port, cname);
 			//document.write("connecting to "+ host);
 			var options = {
-				useSSL:true,
+				// useSSL:true,
+				// userName: "NANDO",
+				// password: "Hivemq123"
+
 				timeout: 3,
 
 				onSuccess: onConnect,
 				onFailure: onFailure,
-				mqttVersion: 3,
-				userName: "NANDO",
-				password: "Hivemq123"
+				// mqttVersion: 3,
 
 			};
 			mqtt.onMessageArrived = onMessageArrived
@@ -155,15 +183,22 @@
 
 
 	<div class="main">
+
+		<label class="user">Scan Package</label>
+		<div id="myProgress">
+			<div id="myBar"></div>
+		</div>
+		<div class="title">
+
+			<a id="back-btn" href="index.html"><img src="/icon/back-icon.png" alt=""></a>
+		</div>
+
 		<div class="package">
+			<label class="info" type="text" id="devID"> </label>
+			<label class="info" id="info">Connecting...</label>
 			<form>
-				<label class="user">Scan Package</label>
-				<label class="info" type="text" id="devID"> </label>
-				<label class="info" id="sub">Not Connected </label>
 				<center>
-					<!-- <div style="text-align:center">
-						<video id="preview" width="200" height="150"></video>
-					</div> -->
+
 					<div class="col">
 						<div style="width:250px" id="preview"></div>
 					</div>
@@ -172,7 +207,7 @@
 
 
 			<div class="info">
-				<input type="text" id="code" placeholder="No.Resi">
+				<input type="text" id="code" placeholder="5 digit terakhir no.resi">
 			</div>
 			<button type="button" onclick="onOpen();">Open</button>
 		</div>
